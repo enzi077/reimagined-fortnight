@@ -8,11 +8,11 @@ Card,
 CardActionArea,
 CardActions,
 Collapse,
-CardContent,
-CardHeader} from '@material-ui/core'
+CardContent,} from '@material-ui/core'
 import clsx from 'clsx'
 import BackArrow from '@material-ui/icons/ArrowBackIosOutlined';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
+import {dispFirstThirtyChars} from '../Constants'
 
 const useStyles=makeStyles(theme=>({
     containerCity:{
@@ -33,6 +33,9 @@ const useStyles=makeStyles(theme=>({
     },
     expandOpen:{
         transform: 'rotate(180deg)',
+    },
+    listDisplay:{
+        marginBottom:"20px"
     }
 }))
 
@@ -41,7 +44,7 @@ const City=(props)=>{
     const {params}=match
     const {cityId}=params
     const classes=useStyles()
-    const [city, setCity] = useState(data)
+    const [city] = useState(data[cityId])
     const [expanded, setExpanded] = useState(false);
 
     const handleExpandClick = () => {
@@ -49,7 +52,7 @@ const City=(props)=>{
     };
     
     const generateInfo=()=>{
-        const {name,description,jobSites,staySites}=city[cityId]
+        const {name,description,jobSites,cities,staySites}=city
         return (
             <>
                 <Box overflow="hidden">
@@ -74,50 +77,95 @@ const City=(props)=>{
                                     </Typography>
                                     <CardContent>
                                         <Typography><b>About</b></Typography>
-                                        <Typography>
-                                            {description}
-                                        </Typography>
+                                        {description.map((state,index)=>{
+                                            const {type,value}=state
+                                            return(
+                                                <>
+                                                    <Typography variant="body1" key={index}>
+                                                        {`${type}=${value}`}
+                                                    </Typography>
+                                                </>
+                                            )
+                                        })}
+                                        <br/>
                                         <Typography><b>Job sites</b></Typography>
-                                        {jobSites.map(jobInfo=>{
+                                        {jobSites.map((jobInfo,index)=>{
                                             const {urlJob}=jobInfo
                                             return(
-                                                <Typography>
-                                                    <a 
-                                                        style={{textDecoration:"none"}}
-                                                        href={urlJob}
-                                                    >
-                                                        {urlJob}
-                                                    </a>
-                                                </Typography>
+                                                <>
+                                                    <Typography 
+                                                    className={classes.listDisplay} key={index}>
+                                                        <a  
+                                                            style={{
+                                                                textDecoration:"underline black",
+                                                                color:"black"
+                                                            }}
+                                                            href={urlJob}
+                                                        >
+                                                            {`${dispFirstThirtyChars(urlJob)}...`}
+                                                        </a>
+                                                    </Typography>
+                                                </>
                                             )
                                         })}
                                     </CardContent>
-                                    <CardActions disableSpacing>
-                                        <IconButton
-                                            onClick={handleExpandClick}
-                                            aria-expanded={expanded}
-                                            aria-label="show more"
-                                            className={clsx(classes.expand, {
-                                                [classes.expandOpen]: expanded,
-                                            })}
-                                        >
-                                            <ExpandMoreIcon/>
-                                        </IconButton>
-                                    </CardActions>
-                                    <Collapse in={expanded} timeout="auto" unmountOnExit>
+                                </CardActionArea>
+                                <CardActions disableSpacing>
+                                    <IconButton
+                                        onClick={handleExpandClick}
+                                        aria-expanded={expanded}
+                                        aria-label="show more"
+                                        className={clsx(classes.expand, {
+                                            [classes.expandOpen]: expanded,
+                                        })}
+                                    >
+                                        <ExpandMoreIcon/>
+                                    </IconButton>
+                                </CardActions>
+                                <Collapse in={expanded} timeout="auto" unmountOnExit>
+                                    <CardActionArea>
                                         <CardContent>
-                                            <Typography><b>Stay (Hostels and PGs)</b></Typography>
-                                            {staySites.map(stayInfo=>{
-                                                const {urlStay}=stayInfo
+                                            <Typography><b>Important Cities</b></Typography>
+                                            {cities.map((cityInfo,index)=>{
+                                                const {cityName}=cityInfo
                                                 return(
-                                                    <Typography>
-                                                        {urlStay}
+                                                    <Typography key={index}>
+                                                        {cityName}
                                                     </Typography>
                                                 )
                                             })}
+                                            <br/>
+                                            <Typography><b>Stay (Hostels and PGs)</b></Typography>
+                                            {staySites.map((stayInfo,index)=>{
+                                                const {urlStay}=stayInfo
+                                                if(urlStay)
+                                                {return(
+                                                    <>
+                                                        <Typography key={index} className={classes.listDisplay}>
+                                                            <a
+                                                                style={{
+                                                                    textDecoration:"underline black",
+                                                                    color:"black"
+                                                                }}
+                                                                href={urlStay}
+                                                            >
+                                                                {`${dispFirstThirtyChars(urlStay)}...`}
+                                                            </a>
+                                                        </Typography>
+                                                    </>
+                                                )}else{
+                                                    return(
+                                                        <>
+                                                            <Typography>
+                                                                No data
+                                                            </Typography>
+                                                        </>
+                                                    )
+                                                }
+                                            })}
                                         </CardContent>
-                                    </Collapse>
-                                </CardActionArea>
+                                    </CardActionArea>
+                                </Collapse>
                             </Card> 
                         </Grid>
                     </Grid>

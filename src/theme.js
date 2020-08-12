@@ -1,5 +1,5 @@
 import { createMuiTheme} from '@material-ui/core/styles';
-import { teal } from '@material-ui/core/colors';
+import { teal,grey } from '@material-ui/core/colors';
 
 const theme = createMuiTheme({
     typography:{
@@ -12,6 +12,12 @@ const theme = createMuiTheme({
       light:teal[50]
     },
   },
+  myColors:{
+      greyShades:{
+          light:grey[100],
+          dark: grey[900]
+      }
+  }
 });
 
 export default theme
